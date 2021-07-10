@@ -4,12 +4,12 @@
 
 'use strict';
 
-const SjlFileInfo = require('./src/SjlFileInfo'),
+const FileInfo = require('./src/FileInfo'),
     dirWalkToTree = require('./src/dirWalkToTree'),
     dirWalk = require('./src/dirWalk');
 
 module.exports = {
-    SjlFileInfo,
+    FileInfo,
     dirWalkToTree,
     dirWalk
 };

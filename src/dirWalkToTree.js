@@ -4,11 +4,7 @@
 
 'use strict';
 
-const path = require('path'),
-
-    SjlFileInfo = require('./SjlFileInfo'),
-
-    dirWalk = require('./dirWalk'),
+const dirWalk = require('./dirWalk'),
 
     id = x => x,
 

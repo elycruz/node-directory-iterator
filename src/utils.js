@@ -4,39 +4,27 @@
 
 'use strict';
 
-const fs = require('fs'),
+const fs = require('fs').promises,
 
     util = require('util'),
+
     inspect = util.inspect.bind(util),
-    log = console.log.bind(console),
 
-    peakOnce = incoming => {
-        log('peakOnce: ', inspect(incoming, {depth: 100}));
-        return Promise.resolve(incoming);
-    },
+    {log, error, warn} = console,
 
-    readDirectory = dir => new Promise((resolve, reject) => {
-        fs.readdir(dir, fsReadCallbackFactory(resolve, reject));
-    }),
+    peak = arg => (log('peak: ', inspect(arg, {depth: 100})), arg),
 
-    readStat = (filePath) => new Promise((resolve, reject) => {
-        fs.lstat(filePath, fsReadCallbackFactory(resolve, reject));
-    }),
+    readDirectory = fs.readdir,
 
-    fsReadCallbackFactory = (resolve, reject) => (err, result) => {
-        if (!!err || err instanceof Error) {
-            reject(err);
-        }
-        resolve(result);
-    },
+    readStat = fs.lstat,
 
-    fileObject = (TypeRep, fileName, filePath, stat) => new TypeRep(
-        fileName, filePath, stat);
+    fileObject = (TypeRep, fileName, filePath, stat) => new TypeRep(fileName, filePath, stat);
 
 module.exports = {
     readDirectory,
     readStat,
-    fsReadCallbackFactory,
     fileObject,
-    log
+    log,
+    warn,
+    error
 };

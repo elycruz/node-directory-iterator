@@ -7,14 +7,14 @@
 const fs = require('fs'),
     path = require('path'),
 
-    SjlFileInfoMethodNames = [
+    FileInfoMethodNames = [
         'isSymbolicLink', 'isFile', 'isDirectory',
         'isBlockDevice', 'isCharacterDevice', 'isFIFO',
         'isSocket'
     ],
 
     statModeAboveMask = (mode, mask) => {
-        return !!(mask & parseInt ((mode & 0o777).toString (8)[0], 10));
+        return !!(mask & parseInt((mode & 0o777).toString(8)[0], 10));
     },
 
     isReadable = statMode => statModeAboveMask(statMode, 4),
@@ -23,7 +23,7 @@ const fs = require('fs'),
 
     isWritable = statMode => statModeAboveMask(statMode, 2);
 
-function SjlFileInfo (fileName, filePath, stat, files) {
+function FileInfo(fileName, filePath, stat, files) {
     const ext = path.extname(fileName),
         basename = path.basename(fileName, ext);
     Object.defineProperties(this, {
@@ -72,25 +72,25 @@ function SjlFileInfo (fileName, filePath, stat, files) {
     }
 }
 
-SjlFileInfo.prototype.isExecutable = function () {
+FileInfo.prototype.isExecutable = function () {
     return isExecutable(this.stat.mode);
 };
 
-SjlFileInfo.prototype.isReadable = function () {
+FileInfo.prototype.isReadable = function () {
     return isReadable(this.stat.mode);
 };
 
-SjlFileInfo.prototype.isWritable = function () {
+FileInfo.prototype.isWritable = function () {
     return isWritable(this.stat.mode);
 };
 
-SjlFileInfoMethodNames.forEach(key => {
-    SjlFileInfo.prototype[key] = function () {
+FileInfoMethodNames.forEach(key => {
+    FileInfo.prototype[key] = function () {
         return this.stat[key]();
     };
 });
 
-Object.defineProperty(SjlFileInfo, 'statModeAboveMask',
+Object.defineProperty(FileInfo, 'statModeAboveMask',
     {value: statModeAboveMask, enumerable: true});
 
-module.exports = SjlFileInfo;
+module.exports = FileInfo;
