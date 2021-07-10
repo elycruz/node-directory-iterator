@@ -2,8 +2,6 @@
  * Created by elyde on 5/6/2017.
  */
 
-'use strict';
-
 const fs = require('fs'),
     path = require('path'),
 

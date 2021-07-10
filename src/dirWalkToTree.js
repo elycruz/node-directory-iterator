@@ -2,8 +2,6 @@
  * Created by u067265 on 5/3/17.
  */
 
-'use strict';
-
 const dirWalk = require('./dirWalk'),
 
     id = x => x,
