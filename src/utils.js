@@ -10,7 +10,7 @@ const fs = require('fs').promises,
 
     {log, error, warn} = console,
 
-    peak = arg => (log('peak: ', inspect(arg, {depth: 100})), arg),
+    peak = (...args) => (log('peak: ', ...args.map(arg => inspect(arg, {depth: 100})), args.pop())),
 
     readDirectory = fs.readdir,
 
@@ -24,5 +24,6 @@ module.exports = {
     fileObject,
     log,
     warn,
-    error
+    error,
+    peak,
 };

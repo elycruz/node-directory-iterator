@@ -3,26 +3,67 @@
  */
 
 const path = require('path'),
-    log = console.log.bind(console),
-    dirWalk = require('../src/dirWalk');
 
-// Recursively walk directory
-dirWalk (
+    assert = require('assert').strict,
 
-    // Use default `TypeRep`
-    null,
+    {log, error, peak} = require('../src/utils'),
 
-    // Directory effect factory
-    (dirPath, stat, dirName) => fileInfoObj => fileInfoObj,
+    {keys} = Object,
 
-    // File effect factory
-    (filePath, stat, fileName) => fileInfoObj => fileInfoObj,
+    dirWalk = require('../src/dirWalk'),
 
-    // Dir to walk
-    path.join(__dirname, '/../')
-)
-    // Pretty print compiled
-    .then(obj => JSON.stringify(obj, null, 4))
+    allYourBasePath = './fixtures/all',
 
-    // Log result or catch
-    .then(log, log);
+    speciaIntersect = (a, b) => keys(a).reduce((agg, key) => {
+        const shouldCopy = Object.prototype.hasOwnProperty.call(b, key);
+        const rValue = b[key];
+        if (shouldCopy && Array.isArray(rValue)) {
+            agg[key] = rValue.map(x => speciaIntersect(a, x));
+        } else if (shouldCopy) {
+            agg[key] = rValue;
+        }
+        return agg;
+    }, {})
+;
+
+
+(async () => Promise.all([
+        [`When reading "${allYourBasePath}" found directories should match expected`, allYourBasePath, {
+            fileName: 'all',
+            files: [{
+                fileName: 'your',
+                files: [{
+                    fileName: 'base',
+                    files: [{
+                        fileName: 'are',
+                        files: [{
+                            fileName: 'belong',
+                            files: [{
+                                fileName: 'to',
+                                files: [{
+                                    fileName: 'us',
+                                    files: [{
+                                        fileName: '.keepdir',
+                                    }]
+                                }]
+                            }]
+                        }]
+                    }]
+                }]
+            }]
+        }]
+    ]
+        .map(([testName, dirPath, expected]) => {
+            log(testName);
+
+            return dirWalk(
+                null,
+                () => x => x,
+                () => x => x,
+                path.join(__dirname, dirPath)
+            )
+                .then(rslt => assert.deepEqual(expected, speciaIntersect(expected, rslt)))
+                .then(log, error)
+        }))
+        .then(() => log('tests complete'), error)
+)();
